@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Character, deleteCharacter } from '../utils/localStorage';
 import { formatDate } from '../utils/calculations';
-import { toast } from '@/components/ui/sonner';
+import { toast } from "../utils/toast";
 
 interface CharacterTableProps {
   characters: Character[];

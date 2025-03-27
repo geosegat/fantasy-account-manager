@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { saveCharacter } from '../utils/localStorage';
-import { toast } from "@/components/ui/sonner";
+import { toast } from "../utils/toast";
 
 interface CharacterFormProps {
   onSave: () => void;
