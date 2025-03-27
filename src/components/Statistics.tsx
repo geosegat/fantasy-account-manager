@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { getCharacters, getCharacterNames } from "../utils/localStorage";
 import { sumCharacters, formatNumber } from "../utils/calculations";
+import { AppIcons } from "./ui/appicons";
 
 interface StatisticsProps {
   refreshKey?: number;
@@ -18,6 +19,22 @@ const Statistics: React.FC<StatisticsProps> = ({ refreshKey = 0 }) => {
     gold: 0,
   }));
   const [totalResets, setTotalResets] = useState<number | null>(null);
+
+  const totalResetsRef = useRef<HTMLDivElement>(null);
+
+  const calculateTotalResets = () => {
+    const calculatedTotalResets = total.mr * 150 + total.resets;
+    setTotalResets(calculatedTotalResets);
+
+    setTimeout(() => {
+      if (totalResetsRef.current) {
+        totalResetsRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
+    }, 100);
+  };
 
   useEffect(() => {
     const uniqueNames = getCharacterNames();
@@ -37,53 +54,39 @@ const Statistics: React.FC<StatisticsProps> = ({ refreshKey = 0 }) => {
     setTotal(result);
   }, [selectedName, refreshKey]);
 
-  const calculateTotalResets = () => {
-    const calculatedTotalResets = total.mr * 150 + total.resets;
-    setTotalResets(calculatedTotalResets);
-  };
-
   return (
-    <div className="glass-panel p-6 ">
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 gap-2">
+    <div className="glass-panel p-6">
+      <div className="flex flex-col md:flex-row items-center justify-between mb-4 space-y-2 md:space-y-0 md:space-x-2">
         <h2 className="text-xl font-medieval text-mu-gold flex items-center gap-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-          </svg>
+          <AppIcons.ChartLine width={30} height={30} />
           Estatísticas
         </h2>
 
-        <div className="flex items-center gap-2">
-          <label
-            htmlFor="characterSelect"
-            className="font-medieval text-mu-gold"
-          >
-            Personagem:
-          </label>
-          <select
-            id="characterSelect"
-            value={selectedName}
-            onChange={(e) => setSelectedName(e.target.value)}
-            className="border border-mu-border rounded px-2 py-1"
-          >
-            {names.map((nameOption) => (
-              <option key={nameOption} value={nameOption}>
-                {nameOption}
-              </option>
-            ))}
-          </select>
+        <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <label
+              htmlFor="characterSelect"
+              className="font-medieval text-mu-gold whitespace-nowrap"
+            >
+              Personagem:
+            </label>
+            <select
+              id="characterSelect"
+              value={selectedName}
+              onChange={(e) => setSelectedName(e.target.value)}
+              className="border border-mu-border rounded px-2 py-1 w-full sm:w-auto"
+            >
+              {names.map((nameOption) => (
+                <option key={nameOption} value={nameOption}>
+                  {nameOption}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <button
             onClick={calculateTotalResets}
-            className="ml-2 secondary-button flex items-center gap-2"
+            className="secondary-button flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0"
           >
             Calcular Resets Gerais
           </button>
@@ -134,9 +137,11 @@ const Statistics: React.FC<StatisticsProps> = ({ refreshKey = 0 }) => {
         </div>
 
         {totalResets !== null && (
-          <div className="stat-card col-span-full">
+          <div ref={totalResetsRef} className="stat-card col-span-full">
             <div className="border-b border-mu-border pb-2 mb-2">
-              <h3 className="text-mu-gold/90 font-medieval">Total de Resets</h3>
+              <h3 className="text-mu-gold/90 font-medieval">
+                Total de Resets Gerais
+              </h3>
             </div>
             <p className="text-2xl font-bold text-mu-gold">
               {formatNumber(totalResets)}
