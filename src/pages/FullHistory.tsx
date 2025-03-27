@@ -99,7 +99,9 @@ const FullHistory: React.FC = () => {
         >
           <AppIcons.ArrowLeft size={24} />
         </button>
-        <h1 className="text-3xl font-bold ">Histórico Completo</h1>
+        <h1 className="text-3xl font-bold font-medieval ">
+          Histórico Completo
+        </h1>
       </div>
 
       <Header onImportSuccess={handleRefresh} />
@@ -110,7 +112,7 @@ const FullHistory: React.FC = () => {
             className="flex justify-between items-center cursor-pointer"
             onClick={() => setIsFilterExpanded(!isFilterExpanded)}
           >
-            <h2 className="text-2xl font-bold flex items-center gap-2 text-mu-gold">
+            <h2 className="text-2xl font-bold flex items-center gap-2 text-mu-gold font-medieval">
               <AppIcons.Filter /> Filtros
               {isFilterExpanded ? (
                 <AppIcons.ChevronUp />

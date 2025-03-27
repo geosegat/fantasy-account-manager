@@ -39,7 +39,7 @@ const Dashboard: React.FC = () => {
         <CharacterForm onSave={handleRefresh} />
 
         <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-mu-gold">
+          <h2 className="text-2xl font-bold text-mu-gold font-medieval">
             Personagens Ativos
           </h2>
           <button onClick={handleViewFullHistory} className="secondary-button">
