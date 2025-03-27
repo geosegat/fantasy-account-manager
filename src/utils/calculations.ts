@@ -1,4 +1,4 @@
-
+// utils/calculations.ts
 import { Character, getCharacters } from "./localStorage";
 
 interface Stat {
@@ -11,86 +11,98 @@ interface Stats {
   hourly: Stat;
   daily: Stat;
   weekly: Stat;
-  total: Stat; // Added total stats
+  total: Stat;
 }
 
-export const calculateStats = (): Stats => {
-  const characters = getCharacters();
-  
+/**
+ * Calcula o "histórico" (última hora, dia, semana) e total, podendo filtrar por um personagem específico.
+ * - Se `characterName` for 'Todos' ou undefined, calcula com base em todos os personagens.
+ */
+export function calculateStats(characterName?: string): Stats {
+  const allChars = getCharacters();
+
+  // Filtra caso seja um personagem específico
+  const characters =
+    !characterName || characterName === "Todos"
+      ? allChars
+      : allChars.filter(
+          (c) => c.name.toLowerCase() === characterName.toLowerCase()
+        );
+
+  // Se não houver nenhum personagem (ou nenhum que atenda ao filtro)
   if (characters.length === 0) {
     return {
       hourly: { resets: 0, soul: 0, mr: 0 },
       daily: { resets: 0, soul: 0, mr: 0 },
       weekly: { resets: 0, soul: 0, mr: 0 },
-      total: { resets: 0, soul: 0, mr: 0 }
+      total: { resets: 0, soul: 0, mr: 0 },
     };
   }
 
-  // Calculate total stats
-  const totalStats = characters.reduce(
-    (acc, character) => {
-      return {
-        resets: acc.resets + character.resets,
-        soul: acc.soul + character.soul,
-        mr: acc.mr + character.mr
-      };
-    },
-    { resets: 0, soul: 0, mr: 0 }
-  );
-  
-  // Sort characters by timestamp
-  const sortedCharacters = [...characters].sort((a, b) => a.timestamp - b.timestamp);
-  
-  // Get the first and last timestamp
-  const firstTimestamp = sortedCharacters[0].timestamp;
-  const lastTimestamp = sortedCharacters[sortedCharacters.length - 1].timestamp;
-  
-  // Calculate the time difference
-  const timeDiff = Math.max(lastTimestamp - firstTimestamp, 1); // At least 1ms to avoid division by zero
-  
-  // Time constants in milliseconds
+  const now = Date.now();
   const HOUR = 3600000;
   const DAY = 86400000;
   const WEEK = 604800000;
-  
-  // Calculate average stats per time period
+
+  // Função auxiliar que soma atributos dentro de um range de tempo
+  function sumStatInTimeWindow(
+    start: number,
+    end: number,
+    statKey: keyof Character
+  ) {
+    return characters
+      .filter((c) => c.timestamp >= start && c.timestamp <= end)
+      .reduce((acc, c) => acc + Number(c[statKey]), 0);
+  }
+
+  // Última hora
   const hourlyStats = {
-    resets: (totalStats.resets / timeDiff) * HOUR,
-    soul: (totalStats.soul / timeDiff) * HOUR,
-    mr: (totalStats.mr / timeDiff) * HOUR
+    resets: sumStatInTimeWindow(now - HOUR, now, "resets"),
+    soul: sumStatInTimeWindow(now - HOUR, now, "soul"),
+    mr: sumStatInTimeWindow(now - HOUR, now, "mr"),
   };
-  
+
+  // Último dia
   const dailyStats = {
-    resets: (totalStats.resets / timeDiff) * DAY,
-    soul: (totalStats.soul / timeDiff) * DAY,
-    mr: (totalStats.mr / timeDiff) * DAY
+    resets: sumStatInTimeWindow(now - DAY, now, "resets"),
+    soul: sumStatInTimeWindow(now - DAY, now, "soul"),
+    mr: sumStatInTimeWindow(now - DAY, now, "mr"),
   };
-  
+
+  // Última semana
   const weeklyStats = {
-    resets: (totalStats.resets / timeDiff) * WEEK,
-    soul: (totalStats.soul / timeDiff) * WEEK,
-    mr: (totalStats.mr / timeDiff) * WEEK
+    resets: sumStatInTimeWindow(now - WEEK, now, "resets"),
+    soul: sumStatInTimeWindow(now - WEEK, now, "soul"),
+    mr: sumStatInTimeWindow(now - WEEK, now, "mr"),
   };
-  
+
+  // Total: do começo (timestamp=0) até agora
+  // (ou seja, soma todos os registros desse personagem (ou todos) ignorando o range)
+  function sumAllStat(statKey: keyof Character) {
+    return characters.reduce((acc, c) => acc + Number(c[statKey]), 0);
+  }
+
+  const totalStats = {
+    resets: sumAllStat("resets"),
+    soul: sumAllStat("soul"),
+    mr: sumAllStat("mr"),
+  };
+
   return {
     hourly: hourlyStats,
     daily: dailyStats,
     weekly: weeklyStats,
-    total: totalStats
+    total: totalStats,
   };
-};
+}
 
-export const formatNumber = (value: number): string => {
-  // For exact values with limited decimal places for averages
-  if (Number.isInteger(value)) {
-    // For integer values (like total stats), show exact number
-    return value.toString();
-  } else {
-    // For decimal values (like averages), round to 2 decimal places
-    return value.toFixed(2);
-  }
-};
+/**
+ * Formata número sem abreviação (ex.: "22").
+ */
+export function formatNumber(value: number): string {
+  return value.toString();
+}
 
-export const formatDate = (timestamp: number): string => {
+export function formatDate(timestamp: number): string {
   return new Date(timestamp).toLocaleString();
-};
+}

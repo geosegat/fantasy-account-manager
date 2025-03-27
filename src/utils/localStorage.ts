@@ -1,3 +1,4 @@
+// utils/localStorage.ts
 
 export interface Character {
   id: string;
@@ -11,42 +12,95 @@ export interface Character {
   timestamp: number;
 }
 
-const STORAGE_KEY = 'mu-characters';
+export function getCharacters(): Character[] {
+  const data = localStorage.getItem("mu-characters");
+  if (!data) return [];
+  try {
+    return JSON.parse(data) as Character[];
+  } catch {
+    return [];
+  }
+}
 
-export const getCharacters = (): Character[] => {
-  const data = localStorage.getItem(STORAGE_KEY);
-  return data ? JSON.parse(data) : [];
-};
+function setCharacters(chars: Character[]) {
+  localStorage.setItem("mu-characters", JSON.stringify(chars));
+}
 
-export const saveCharacter = (character: Omit<Character, 'id' | 'timestamp'>): Character => {
+/**
+ * Gera ID único, se não existir. Pode usar crypto.randomUUID() (se disponível)
+ */
+function generateId() {
+  // Se seu ambiente suportar `crypto.randomUUID`, pode usar diretamente:
+  // return crypto.randomUUID();
+
+  // Caso não suporte, use algo simples como Date.now() + random:
+  return `${Date.now()}-${Math.floor(Math.random() * 1000000)}`;
+}
+
+export function saveCharacter(char: Partial<Character>) {
+  const all = getCharacters();
+
+  // Se vier sem ID (novo personagem), geramos um
+  if (!char.id) {
+    char.id = generateId();
+  }
+
+  // Se não tiver timestamp ainda, define um
+  if (!char.timestamp) {
+    char.timestamp = Date.now();
+  }
+
+  // Verifica se já existe no array
+  const index = all.findIndex((c) => c.id === char.id);
+  if (index >= 0) {
+    // Atualiza os campos
+    const old = all[index];
+    all[index] = {
+      ...old,
+      ...char,
+    };
+  } else {
+    // Adiciona no array
+    all.push(char as Character);
+  }
+
+  setCharacters(all);
+}
+
+export function deleteCharacter(id: string) {
+  const all = getCharacters().filter((c) => c.id !== id);
+  setCharacters(all);
+}
+
+// ... exportCharacters, getCharacterNames, etc. ...
+
+/**
+ * Função que gera e BAIXA um arquivo JSON contendo todos os personagens.
+ */
+export function exportCharacters() {
   const characters = getCharacters();
-  
-  const newCharacter: Character = {
-    ...character,
-    id: crypto.randomUUID(),
-    timestamp: Date.now(),
-  };
-  
-  localStorage.setItem(STORAGE_KEY, JSON.stringify([...characters, newCharacter]));
-  
-  return newCharacter;
-};
+  const dataStr = JSON.stringify(characters, null, 2); // espaçamento de 2
 
-export const deleteCharacter = (id: string): void => {
-  const characters = getCharacters();
-  const filteredCharacters = characters.filter(character => character.id !== id);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(filteredCharacters));
-};
+  // Cria um "blob" do arquivo JSON
+  const blob = new Blob([dataStr], { type: "application/json" });
 
-export const exportCharacters = (): void => {
-  const characters = getCharacters();
-  const dataStr = JSON.stringify(characters, null, 2);
-  const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(dataStr)}`;
-  
-  const exportFileDefaultName = `mu-characters-${new Date().toISOString().slice(0, 10)}.json`;
-  
-  const linkElement = document.createElement('a');
-  linkElement.setAttribute('href', dataUri);
-  linkElement.setAttribute('download', exportFileDefaultName);
-  linkElement.click();
-};
+  // Cria URL temporária pra download
+  const url = URL.createObjectURL(blob);
+
+  // Cria link, aciona clique e remove
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "mu-characters.json"; // nome do arquivo
+  link.click();
+
+  URL.revokeObjectURL(url);
+}
+
+/**
+ * Retorna nomes de personagens (sem duplicados) para preencher selects, etc.
+ */
+export function getCharacterNames(): string[] {
+  const allChars = getCharacters();
+  const uniqueNames = Array.from(new Set(allChars.map((c) => c.name)));
+  return uniqueNames;
+}

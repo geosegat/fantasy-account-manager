@@ -1,31 +1,70 @@
-
-import React, { useState } from 'react';
-import { saveCharacter } from '../utils/localStorage';
-import { toast } from "../utils/toast";
+import React, { useState, useEffect } from "react";
+import {
+  getCharacterNames,
+  getCharacters,
+  saveCharacter,
+} from "../utils/localStorage";
 import { Input } from "@/components/ui/input";
+import { toast } from "../utils/toast";
 
 interface CharacterFormProps {
   onSave: () => void;
 }
 
 const CharacterForm: React.FC<CharacterFormProps> = ({ onSave }) => {
-  const [name, setName] = useState('');
-  const [resets, setResets] = useState<string>('');
-  const [soul, setSoul] = useState<string>('');
-  const [mr, setMr] = useState<string>('');
-  const [eventPoints, setEventPoints] = useState<string>('');
-  const [pcPoints, setPcPoints] = useState<string>('');
-  const [gold, setGold] = useState<string>('');
+  const [name, setName] = useState("");
+  const [resets, setResets] = useState("");
+  const [soul, setSoul] = useState("");
+  const [mr, setMr] = useState("");
+  const [eventPoints, setEventPoints] = useState("");
+  const [pcPoints, setPcPoints] = useState("");
+  const [gold, setGold] = useState("");
+
+  // Lista de nomes já existentes, para exibir no datalist
+  const [existingNames, setExistingNames] = useState<string[]>([]);
+
+  useEffect(() => {
+    setExistingNames(getCharacterNames());
+  }, []);
+
+  /**
+   * Sempre que o `name` mudar, se ele já existir em existingNames,
+   * buscamos os dados completos desse personagem e preenchemos o formulário.
+   */
+  useEffect(() => {
+    if (existingNames.includes(name)) {
+      const allChars = getCharacters();
+      const found = allChars.find(
+        (c) => c.name.toLowerCase() === name.toLowerCase()
+      );
+      if (found) {
+        setResets(found.resets.toString());
+        setSoul(found.soul.toString());
+        setMr(found.mr.toString());
+        setEventPoints(found.eventPoints.toString());
+        setPcPoints(found.pcPoints.toString());
+        setGold(found.gold.toString());
+      }
+    } else {
+      // Se digitou um nome que não existe, limpamos o form (ou mantemos do jeito que preferir)
+      setResets("");
+      setSoul("");
+      setMr("");
+      setEventPoints("");
+      setPcPoints("");
+      setGold("");
+    }
+  }, [name, existingNames]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!name.trim()) {
       toast.error("Nome do personagem é obrigatório");
       return;
     }
-    
-    // Salvar o personagem
+
+    // Salvar/atualizar personagem (sobrescrevendo dados)
     saveCharacter({
       name,
       resets: parseInt(resets) || 0,
@@ -35,19 +74,23 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ onSave }) => {
       pcPoints: parseInt(pcPoints) || 0,
       gold: parseInt(gold) || 0,
     });
-    
-    // Resetar formulário
-    setName('');
-    setResets('');
-    setSoul('');
-    setMr('');
-    setEventPoints('');
-    setPcPoints('');
-    setGold('');
-    
-    // Notificar componente pai
+
+    // Se você quiser que o formulário só limpe se for um nome novo, pode condicionar;
+    // aqui vou sempre limpar, mas se preferir manter, basta remover esta parte.
+    setName("");
+    setResets("");
+    setSoul("");
+    setMr("");
+    setEventPoints("");
+    setPcPoints("");
+    setGold("");
+
+    // Atualiza lista de nomes (caso seja um novo)
+    setExistingNames(getCharacterNames());
+
+    // Notifica componente pai
     onSave();
-    
+
     toast.success("Personagem salvo com sucesso");
   };
 
@@ -55,8 +98,8 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ onSave }) => {
     setter: React.Dispatch<React.SetStateAction<string>>,
     value: string
   ) => {
-    // Allow only numbers
-    if (value === '' || /^\d+$/.test(value)) {
+    // Permite apenas números vazios ou digits
+    if (value === "" || /^\d+$/.test(value)) {
       setter(value);
     }
   };
@@ -64,30 +107,51 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ onSave }) => {
   return (
     <div className="glass-panel p-6 medieval-border">
       <h2 className="text-xl font-medieval text-mu-gold mb-4 flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
           <polyline points="14 2 14 8 20 8" />
         </svg>
-        Cadastro de Personagem
+        Cadastro / Edição de Personagem
       </h2>
-      
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {/* NOME */}
           <div>
-            <label htmlFor="name" className="input-label">Nome do Personagem</label>
+            <label htmlFor="name" className="input-label">
+              Nome do Personagem
+            </label>
             <Input
+              list="character-names"
               id="name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="input-field"
-              placeholder="Digite o nome do personagem"
+              placeholder="Digite ou selecione"
               required
             />
+            <datalist id="character-names">
+              {existingNames.map((existingName) => (
+                <option key={existingName} value={existingName} />
+              ))}
+            </datalist>
           </div>
-          
+
+          {/* RESETS */}
           <div>
-            <label htmlFor="resets" className="input-label">Resets</label>
+            <label htmlFor="resets" className="input-label">
+              Resets
+            </label>
             <Input
               id="resets"
               type="text"
@@ -98,9 +162,12 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ onSave }) => {
               placeholder="0"
             />
           </div>
-          
+
+          {/* SOUL */}
           <div>
-            <label htmlFor="soul" className="input-label">Soul</label>
+            <label htmlFor="soul" className="input-label">
+              Soul
+            </label>
             <Input
               id="soul"
               type="text"
@@ -111,9 +178,12 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ onSave }) => {
               placeholder="0"
             />
           </div>
-          
+
+          {/* MR */}
           <div>
-            <label htmlFor="mr" className="input-label">MR</label>
+            <label htmlFor="mr" className="input-label">
+              MR
+            </label>
             <Input
               id="mr"
               type="text"
@@ -124,22 +194,30 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ onSave }) => {
               placeholder="0"
             />
           </div>
-          
+
+          {/* EVENT POINTS */}
           <div>
-            <label htmlFor="eventPoints" className="input-label">Pontos de Evento</label>
+            <label htmlFor="eventPoints" className="input-label">
+              Pontos de Evento
+            </label>
             <Input
               id="eventPoints"
               type="text"
               inputMode="numeric"
               value={eventPoints}
-              onChange={(e) => handleNumberChange(setEventPoints, e.target.value)}
+              onChange={(e) =>
+                handleNumberChange(setEventPoints, e.target.value)
+              }
               className="input-field"
               placeholder="0"
             />
           </div>
-          
+
+          {/* PC POINTS */}
           <div>
-            <label htmlFor="pcPoints" className="input-label">PC Points</label>
+            <label htmlFor="pcPoints" className="input-label">
+              PC Points
+            </label>
             <Input
               id="pcPoints"
               type="text"
@@ -150,9 +228,12 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ onSave }) => {
               placeholder="0"
             />
           </div>
-          
+
+          {/* GOLD */}
           <div>
-            <label htmlFor="gold" className="input-label">Gold</label>
+            <label htmlFor="gold" className="input-label">
+              Gold
+            </label>
             <Input
               id="gold"
               type="text"
@@ -164,10 +245,22 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ onSave }) => {
             />
           </div>
         </div>
-        
+
         <div className="flex justify-end">
-          <button type="submit" className="primary-button flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <button
+            type="submit"
+            className="primary-button flex items-center gap-2"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
               <polyline points="17 21 17 13 7 13 7 21" />
               <polyline points="7 3 7 8 15 8" />
