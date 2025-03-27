@@ -92,7 +92,7 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ onSave }) => {
   }, [name, existingNames]);
 
   return (
-    <div className="glass-panel p-6 medieval-border">
+    <div className="glass-panel p-6 ">
       <h2 className="text-xl font-medieval text-mu-gold mb-4 flex items-center gap-2">
         <svg
           xmlns="http://www.w3.org/2000/svg"

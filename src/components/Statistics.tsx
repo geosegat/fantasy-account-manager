@@ -17,6 +17,7 @@ const Statistics: React.FC<StatisticsProps> = ({ refreshKey = 0 }) => {
     pcPoints: 0,
     gold: 0,
   }));
+  const [totalResets, setTotalResets] = useState<number | null>(null);
 
   useEffect(() => {
     const uniqueNames = getCharacterNames();
@@ -36,8 +37,13 @@ const Statistics: React.FC<StatisticsProps> = ({ refreshKey = 0 }) => {
     setTotal(result);
   }, [selectedName, refreshKey]);
 
+  const calculateTotalResets = () => {
+    const calculatedTotalResets = total.mr * 150 + total.resets;
+    setTotalResets(calculatedTotalResets);
+  };
+
   return (
-    <div className="glass-panel p-6 medieval-border">
+    <div className="glass-panel p-6 ">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 gap-2">
         <h2 className="text-xl font-medieval text-mu-gold flex items-center gap-2">
           <svg
@@ -74,6 +80,13 @@ const Statistics: React.FC<StatisticsProps> = ({ refreshKey = 0 }) => {
               </option>
             ))}
           </select>
+
+          <button
+            onClick={calculateTotalResets}
+            className="ml-2 secondary-button flex items-center gap-2"
+          >
+            Calcular Resets Gerais
+          </button>
         </div>
       </div>
 
@@ -119,6 +132,20 @@ const Statistics: React.FC<StatisticsProps> = ({ refreshKey = 0 }) => {
           </div>
           <p className="text-xl font-bold">{formatNumber(total.gold)}</p>
         </div>
+
+        {totalResets !== null && (
+          <div className="stat-card col-span-full">
+            <div className="border-b border-mu-border pb-2 mb-2">
+              <h3 className="text-mu-gold/90 font-medieval">Total de Resets</h3>
+            </div>
+            <p className="text-2xl font-bold text-mu-gold">
+              {formatNumber(totalResets)}
+              <span className="text-sm ml-2 text-muted-foreground">
+                (MR * 150 + Resets Atuais)
+              </span>
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

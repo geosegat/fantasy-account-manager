@@ -32,7 +32,7 @@ const CharacterTable: React.FC<CharacterTableProps> = ({
 
   if (characters.length === 0) {
     return (
-      <div className="glass-panel p-6 mb-8 text-center medieval-border">
+      <div className="glass-panel p-6 mb-8 text-center ">
         <p className="text-muted-foreground py-8">
           Nenhum personagem registrado ainda. Adicione seu primeiro personagem
           acima.
@@ -43,7 +43,7 @@ const CharacterTable: React.FC<CharacterTableProps> = ({
 
   return (
     <>
-      <div className="glass-panel p-0 overflow-hidden mb-8 medieval-border">
+      <div className="glass-panel p-0 overflow-hidden mb-8 ">
         <div className="overflow-x-auto">
           <table className="min-w-full table-auto">
             <thead className="table-header">

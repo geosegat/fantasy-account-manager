@@ -46,7 +46,7 @@ const Header: React.FC<HeaderProps> = ({ onImportSuccess }) => {
   };
 
   return (
-    <header className="w-full glass-panel p-6 mb-8 flex flex-col sm:flex-row justify-between items-center gap-4 medieval-border">
+    <header className="w-full glass-panel p-6 mb-8 flex flex-col sm:flex-row justify-between items-center gap-4 ">
       <div className="text-center sm:text-left">
         <h1 className="text-3xl sm:text-4xl font-medieval text-white">
           <span className="text-mu-gold">MU</span>
