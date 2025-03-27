@@ -1,53 +1,64 @@
+// components/Statistics.tsx
+
 import React, { useState, useEffect } from "react";
-import { calculateStats, formatNumber } from "../utils/calculations";
-import { getCharacterNames } from "../utils/localStorage";
+import { getCharacters, getCharacterNames } from "../utils/localStorage";
+import { sumCharacters, formatNumber } from "../utils/calculations";
 
 interface StatisticsProps {
-  refreshKey?: number;
+  refreshKey?: number; // caso queira atualizar quando adicionar/deletar
 }
 
 const Statistics: React.FC<StatisticsProps> = ({ refreshKey = 0 }) => {
   const [names, setNames] = useState<string[]>([]);
-  const [selectedName, setSelectedName] = useState<string>("Todos");
-  const [stats, setStats] = useState(() => calculateStats("Todos"));
+  const [selectedName, setSelectedName] = useState("Todos");
+  const [total, setTotal] = useState(() => ({
+    resets: 0,
+    soul: 0,
+    mr: 0,
+    eventPoints: 0,
+    pcPoints: 0,
+    gold: 0,
+  }));
 
-  // 1) Quando o `refreshKey` muda, recarrega a lista de nomes
+  // Carregar a lista de nomes e colocar "Todos" no início
   useEffect(() => {
-    const existingNames = getCharacterNames();
-    setNames(["Todos", ...existingNames]);
+    const uniqueNames = getCharacterNames();
+    setNames(["Todos", ...uniqueNames]);
   }, [refreshKey]);
 
-  // 2) Quando `selectedName` ou `refreshKey` mudam, recalcula estatísticas
+  // Sempre que selectedName ou refreshKey mudar, soma
   useEffect(() => {
-    setStats(calculateStats(selectedName));
-  }, [selectedName, refreshKey]);
+    const all = getCharacters();
+    let filtered = all;
 
-  const handleReload = () => {
-    setStats(calculateStats(selectedName));
-  };
+    if (selectedName !== "Todos") {
+      filtered = all.filter(
+        (ch) => ch.name.toLowerCase() === selectedName.toLowerCase()
+      );
+    }
+    const result = sumCharacters(filtered);
+    setTotal(result);
+  }, [selectedName, refreshKey]);
 
   return (
     <div className="glass-panel p-6 medieval-border">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 gap-2">
-        <div className="flex items-center gap-2">
-          <h2 className="text-xl font-medieval text-mu-gold flex items-center gap-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-            </svg>
-            Estatísticas do Personagem
-          </h2>
-        </div>
+        <h2 className="text-xl font-medieval text-mu-gold flex items-center gap-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+          </svg>
+          Estatísticas
+        </h2>
 
-        {/* Select para escolher o personagem (ou Todos) */}
         <div className="flex items-center gap-2">
           <label
             htmlFor="characterSelect"
@@ -68,178 +79,50 @@ const Statistics: React.FC<StatisticsProps> = ({ refreshKey = 0 }) => {
             ))}
           </select>
         </div>
-
-        <button
-          onClick={handleReload}
-          className="text-sm px-3 py-1 border border-mu-gold/70 rounded hover:bg-mu-gold/10"
-        >
-          Recarregar
-        </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {/* ÚLTIMA HORA */}
+      {/* Cartão de estatísticas */}
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
         <div className="stat-card">
-          <div className="flex justify-between items-center border-b border-mu-border pb-2">
-            <h3 className="text-mu-gold/90 font-medieval">Última Hora</h3>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 text-mu-gold/70"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <polyline points="12 6 12 12 16 14" />
-            </svg>
+          <div className="border-b border-mu-border pb-2 mb-2">
+            <h3 className="text-mu-gold/90 font-medieval">Resets</h3>
           </div>
-          <div className="space-y-1 pt-2">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Resets:</span>
-              <span className="font-medium">
-                {formatNumber(stats.hourly.resets)}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Soul:</span>
-              <span className="font-medium">
-                {formatNumber(stats.hourly.soul)}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">MR:</span>
-              <span className="font-medium">
-                {formatNumber(stats.hourly.mr)}
-              </span>
-            </div>
-          </div>
+          <p className="text-xl font-bold">{formatNumber(total.resets)}</p>
         </div>
 
-        {/* ÚLTIMO DIA */}
         <div className="stat-card">
-          <div className="flex justify-between items-center border-b border-mu-border pb-2">
-            <h3 className="text-mu-gold/90 font-medieval">Último Dia</h3>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 text-mu-gold/70"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-              <line x1="16" y1="2" x2="16" y2="6" />
-              <line x1="8" y1="2" x2="8" y2="6" />
-              <line x1="3" y1="10" x2="21" y2="10" />
-            </svg>
+          <div className="border-b border-mu-border pb-2 mb-2">
+            <h3 className="text-mu-gold/90 font-medieval">Soul</h3>
           </div>
-          <div className="space-y-1 pt-2">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Resets:</span>
-              <span className="font-medium">
-                {formatNumber(stats.daily.resets)}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Soul:</span>
-              <span className="font-medium">
-                {formatNumber(stats.daily.soul)}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">MR:</span>
-              <span className="font-medium">
-                {formatNumber(stats.daily.mr)}
-              </span>
-            </div>
-          </div>
+          <p className="text-xl font-bold">{formatNumber(total.soul)}</p>
         </div>
 
-        {/* ÚLTIMA SEMANA */}
         <div className="stat-card">
-          <div className="flex justify-between items-center border-b border-mu-border pb-2">
-            <h3 className="text-mu-gold/90 font-medieval">Última Semana</h3>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 text-mu-gold/70"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="4 7 4 4 20 4 20 7" />
-              <line x1="9" y1="20" x2="15" y2="20" />
-              <line x1="12" y1="4" x2="12" y2="20" />
-            </svg>
+          <div className="border-b border-mu-border pb-2 mb-2">
+            <h3 className="text-mu-gold/90 font-medieval">MR</h3>
           </div>
-          <div className="space-y-1 pt-2">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Resets:</span>
-              <span className="font-medium">
-                {formatNumber(stats.weekly.resets)}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Soul:</span>
-              <span className="font-medium">
-                {formatNumber(stats.weekly.soul)}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">MR:</span>
-              <span className="font-medium">
-                {formatNumber(stats.weekly.mr)}
-              </span>
-            </div>
-          </div>
+          <p className="text-xl font-bold">{formatNumber(total.mr)}</p>
         </div>
 
-        {/* TOTAL GERAL */}
         <div className="stat-card">
-          <div className="flex justify-between items-center border-b border-mu-border pb-2">
-            <h3 className="text-mu-gold/90 font-medieval">Total Geral</h3>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 text-mu-gold/70"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M12 20V10" />
-              <path d="M18 20V4" />
-              <path d="M6 20v-4" />
-            </svg>
+          <div className="border-b border-mu-border pb-2 mb-2">
+            <h3 className="text-mu-gold/90 font-medieval">Pontos de Evento</h3>
           </div>
-          <div className="space-y-1 pt-2">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Resets:</span>
-              <span className="font-medium">
-                {formatNumber(stats.total.resets)}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Soul:</span>
-              <span className="font-medium">
-                {formatNumber(stats.total.soul)}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">MR:</span>
-              <span className="font-medium">
-                {formatNumber(stats.total.mr)}
-              </span>
-            </div>
+          <p className="text-xl font-bold">{formatNumber(total.eventPoints)}</p>
+        </div>
+
+        <div className="stat-card">
+          <div className="border-b border-mu-border pb-2 mb-2">
+            <h3 className="text-mu-gold/90 font-medieval">PC Points</h3>
           </div>
+          <p className="text-xl font-bold">{formatNumber(total.pcPoints)}</p>
+        </div>
+
+        <div className="stat-card">
+          <div className="border-b border-mu-border pb-2 mb-2">
+            <h3 className="text-mu-gold/90 font-medieval">Gold</h3>
+          </div>
+          <p className="text-xl font-bold">{formatNumber(total.gold)}</p>
         </div>
       </div>
     </div>
