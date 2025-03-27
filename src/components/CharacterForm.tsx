@@ -71,16 +71,21 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ onSave }) => {
   useEffect(() => {
     if (existingNames.includes(name)) {
       const allChars = getCharacters();
-      const found = allChars.find(
+      const allVersions = allChars.filter(
         (c) => c.name.toLowerCase() === name.toLowerCase()
       );
-      if (found) {
-        setResets(found.resets.toString());
-        setSoul(found.soul.toString());
-        setMr(found.mr.toString());
-        setEventPoints(found.eventPoints.toString());
-        setPcPoints(found.pcPoints.toString());
-        setGold(found.gold.toString());
+
+      const mostRecent = allVersions.sort(
+        (a, b) => b.timestamp - a.timestamp
+      )[0];
+
+      if (mostRecent) {
+        setResets(mostRecent.resets.toString());
+        setSoul(mostRecent.soul.toString());
+        setMr(mostRecent.mr.toString());
+        setEventPoints(mostRecent.eventPoints.toString());
+        setPcPoints(mostRecent.pcPoints.toString());
+        setGold(mostRecent.gold.toString());
       }
     } else {
       setResets("");
