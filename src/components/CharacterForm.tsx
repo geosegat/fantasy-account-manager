@@ -10,12 +10,12 @@ interface CharacterFormProps {
 
 const CharacterForm: React.FC<CharacterFormProps> = ({ onSave }) => {
   const [name, setName] = useState('');
-  const [resets, setResets] = useState(0);
-  const [soul, setSoul] = useState(0);
-  const [mr, setMr] = useState(0);
-  const [eventPoints, setEventPoints] = useState(0);
-  const [pcPoints, setPcPoints] = useState(0);
-  const [gold, setGold] = useState(0);
+  const [resets, setResets] = useState<string>('');
+  const [soul, setSoul] = useState<string>('');
+  const [mr, setMr] = useState<string>('');
+  const [eventPoints, setEventPoints] = useState<string>('');
+  const [pcPoints, setPcPoints] = useState<string>('');
+  const [gold, setGold] = useState<string>('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,27 +28,37 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ onSave }) => {
     // Salvar o personagem
     saveCharacter({
       name,
-      resets,
-      soul,
-      mr,
-      eventPoints,
-      pcPoints,
-      gold,
+      resets: parseInt(resets) || 0,
+      soul: parseInt(soul) || 0,
+      mr: parseInt(mr) || 0,
+      eventPoints: parseInt(eventPoints) || 0,
+      pcPoints: parseInt(pcPoints) || 0,
+      gold: parseInt(gold) || 0,
     });
     
     // Resetar formulário
     setName('');
-    setResets(0);
-    setSoul(0);
-    setMr(0);
-    setEventPoints(0);
-    setPcPoints(0);
-    setGold(0);
+    setResets('');
+    setSoul('');
+    setMr('');
+    setEventPoints('');
+    setPcPoints('');
+    setGold('');
     
     // Notificar componente pai
     onSave();
     
     toast.success("Personagem salvo com sucesso");
+  };
+
+  const handleNumberChange = (
+    setter: React.Dispatch<React.SetStateAction<string>>,
+    value: string
+  ) => {
+    // Allow only numbers
+    if (value === '' || /^\d+$/.test(value)) {
+      setter(value);
+    }
   };
 
   return (
@@ -80,11 +90,12 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ onSave }) => {
             <label htmlFor="resets" className="input-label">Resets</label>
             <Input
               id="resets"
-              type="number"
+              type="text"
+              inputMode="numeric"
               value={resets}
-              onChange={(e) => setResets(parseInt(e.target.value) || 0)}
-              className="input-field [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              min="0"
+              onChange={(e) => handleNumberChange(setResets, e.target.value)}
+              className="input-field"
+              placeholder="0"
             />
           </div>
           
@@ -92,11 +103,12 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ onSave }) => {
             <label htmlFor="soul" className="input-label">Soul</label>
             <Input
               id="soul"
-              type="number"
+              type="text"
+              inputMode="numeric"
               value={soul}
-              onChange={(e) => setSoul(parseInt(e.target.value) || 0)}
-              className="input-field [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              min="0"
+              onChange={(e) => handleNumberChange(setSoul, e.target.value)}
+              className="input-field"
+              placeholder="0"
             />
           </div>
           
@@ -104,11 +116,12 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ onSave }) => {
             <label htmlFor="mr" className="input-label">MR</label>
             <Input
               id="mr"
-              type="number"
+              type="text"
+              inputMode="numeric"
               value={mr}
-              onChange={(e) => setMr(parseInt(e.target.value) || 0)}
-              className="input-field [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              min="0"
+              onChange={(e) => handleNumberChange(setMr, e.target.value)}
+              className="input-field"
+              placeholder="0"
             />
           </div>
           
@@ -116,11 +129,12 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ onSave }) => {
             <label htmlFor="eventPoints" className="input-label">Pontos de Evento</label>
             <Input
               id="eventPoints"
-              type="number"
+              type="text"
+              inputMode="numeric"
               value={eventPoints}
-              onChange={(e) => setEventPoints(parseInt(e.target.value) || 0)}
-              className="input-field [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              min="0"
+              onChange={(e) => handleNumberChange(setEventPoints, e.target.value)}
+              className="input-field"
+              placeholder="0"
             />
           </div>
           
@@ -128,11 +142,12 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ onSave }) => {
             <label htmlFor="pcPoints" className="input-label">PC Points</label>
             <Input
               id="pcPoints"
-              type="number"
+              type="text"
+              inputMode="numeric"
               value={pcPoints}
-              onChange={(e) => setPcPoints(parseInt(e.target.value) || 0)}
-              className="input-field [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              min="0"
+              onChange={(e) => handleNumberChange(setPcPoints, e.target.value)}
+              className="input-field"
+              placeholder="0"
             />
           </div>
           
@@ -140,11 +155,12 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ onSave }) => {
             <label htmlFor="gold" className="input-label">Gold</label>
             <Input
               id="gold"
-              type="number"
+              type="text"
+              inputMode="numeric"
               value={gold}
-              onChange={(e) => setGold(parseInt(e.target.value) || 0)}
-              className="input-field [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              min="0"
+              onChange={(e) => handleNumberChange(setGold, e.target.value)}
+              className="input-field"
+              placeholder="0"
             />
           </div>
         </div>
