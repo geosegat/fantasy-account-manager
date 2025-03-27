@@ -5,6 +5,7 @@ import CharacterForm from '../components/CharacterForm';
 import CharacterTable from '../components/CharacterTable';
 import Statistics from '../components/Statistics';
 import { getCharacters, Character } from '../utils/localStorage';
+import { Toaster } from "sonner";
 
 const Index: React.FC = () => {
   const [characters, setCharacters] = useState<Character[]>([]);
@@ -20,6 +21,7 @@ const Index: React.FC = () => {
 
   return (
     <div className="min-h-screen px-4 sm:px-6 lg:px-8 py-8 max-w-7xl mx-auto page-transition">
+      <Toaster position="top-right" closeButton richColors />
       <Header />
       
       <div className="space-y-8">
@@ -34,7 +36,7 @@ const Index: React.FC = () => {
       </div>
       
       <footer className="mt-12 text-center text-muted-foreground text-sm">
-        <p>MU Online Account Manager &copy; {new Date().getFullYear()}</p>
+        <p>MU Online Gerenciador de Contas &copy; {new Date().getFullYear()}</p>
       </footer>
     </div>
   );
