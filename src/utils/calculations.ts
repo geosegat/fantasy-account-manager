@@ -81,13 +81,13 @@ export const calculateStats = (): Stats => {
 };
 
 export const formatNumber = (value: number): string => {
-  // Improved formatting with better rounding for readability
-  if (value >= 1000000) {
-    return (Math.round(value / 10000) / 100).toFixed(2) + 'M';
-  } else if (value >= 1000) {
-    return (Math.round(value / 10) / 100).toFixed(2) + 'K';
+  // For exact values with limited decimal places for averages
+  if (Number.isInteger(value)) {
+    // For integer values (like total stats), show exact number
+    return value.toString();
   } else {
-    return value.toFixed(0);
+    // For decimal values (like averages), round to 2 decimal places
+    return value.toFixed(2);
   }
 };
 
