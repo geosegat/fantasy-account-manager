@@ -53,7 +53,7 @@ const CharacterTable: React.FC<CharacterTableProps> = ({ characters, onDelete })
                     localStorage.setItem('mu-characters', JSON.stringify([...parsedChars, savedChar]));
                     onDelete(); // Atualizar lista
                     toast.success("Personagem restaurado com sucesso");
-                    t.dismiss();
+                    t.onDismiss?.();
                   }
                 }}
                 className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none"
@@ -62,7 +62,7 @@ const CharacterTable: React.FC<CharacterTableProps> = ({ characters, onDelete })
                 Desfazer
               </button>
               <button
-                onClick={() => t.dismiss()}
+                onClick={() => t.onDismiss?.()}
                 className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-gray-600 hover:text-gray-500 focus:outline-none"
               >
                 <X className="h-4 w-4 mr-1" />
