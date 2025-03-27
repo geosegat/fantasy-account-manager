@@ -1,11 +1,5 @@
-// utils/calculations.ts
-
 import { Character } from "./localStorage";
 
-/**
- * Soma resets, soul, mr, eventPoints, pcPoints, gold
- * de um array de personagens.
- */
 export function sumCharacters(characters: Character[]): {
   resets: number;
   soul: number;
@@ -33,9 +27,6 @@ export function sumCharacters(characters: Character[]): {
   return { resets, soul, mr, eventPoints, pcPoints, gold };
 }
 
-/**
- * Formata número inteiro como string (sem decimais nem pontuação).
- */
 export function formatNumber(value: number): string {
   return value.toString();
 }

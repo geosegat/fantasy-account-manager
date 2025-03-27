@@ -21,7 +21,7 @@ const Index: React.FC = () => {
   return (
     <div className="min-h-screen px-4 sm:px-6 lg:px-8 py-8 max-w-7xl mx-auto page-transition">
       <Toaster position="top-right" closeButton richColors />
-      <Header />
+      <Header onImportSuccess={handleRefresh} />
 
       <div className="space-y-8">
         <CharacterForm onSave={handleRefresh} />

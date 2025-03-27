@@ -1,11 +1,9 @@
-// components/Statistics.tsx
-
 import React, { useState, useEffect } from "react";
 import { getCharacters, getCharacterNames } from "../utils/localStorage";
 import { sumCharacters, formatNumber } from "../utils/calculations";
 
 interface StatisticsProps {
-  refreshKey?: number; // caso queira atualizar quando adicionar/deletar
+  refreshKey?: number;
 }
 
 const Statistics: React.FC<StatisticsProps> = ({ refreshKey = 0 }) => {
@@ -20,13 +18,11 @@ const Statistics: React.FC<StatisticsProps> = ({ refreshKey = 0 }) => {
     gold: 0,
   }));
 
-  // Carregar a lista de nomes e colocar "Todos" no início
   useEffect(() => {
     const uniqueNames = getCharacterNames();
     setNames(["Todos", ...uniqueNames]);
   }, [refreshKey]);
 
-  // Sempre que selectedName ou refreshKey mudar, soma
   useEffect(() => {
     const all = getCharacters();
     let filtered = all;
@@ -81,7 +77,6 @@ const Statistics: React.FC<StatisticsProps> = ({ refreshKey = 0 }) => {
         </div>
       </div>
 
-      {/* Cartão de estatísticas */}
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
         <div className="stat-card">
           <div className="border-b border-mu-border pb-2 mb-2">
