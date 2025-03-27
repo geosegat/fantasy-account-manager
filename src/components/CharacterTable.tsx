@@ -28,7 +28,7 @@ const CharacterTable: React.FC<CharacterTableProps> = ({ characters, onDelete })
       
       // Mostrar toast com opção de desfazer
       toast.custom(
-        (t) => (
+        (t: any) => (
           <div className="max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5">
             <div className="flex-1 w-0 p-4">
               <div className="flex items-start">
