@@ -76,7 +76,7 @@ const CharacterTable: React.FC<CharacterTableProps> = ({
                   {characterToDelete === character.id ? (
                     <button
                       onClick={() => handleConfirmDelete(character)}
-                      className="secondary-button bg-red-800 text-white hover:bg-red-800"
+                      className="secondary-button text-white bg-red-800 hover:bg-red-900"
                     >
                       Confirmar
                     </button>
