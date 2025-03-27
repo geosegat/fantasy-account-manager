@@ -12,21 +12,18 @@ const CharacterTable: React.FC<CharacterTableProps> = ({
   characters,
   onDelete,
 }) => {
-  const [charToDelete, setCharToDelete] = useState<Character | null>(null);
+  const [characterToDelete, setCharacterToDelete] = useState<string | null>(
+    null
+  );
 
-  const handleOpenDeleteModal = (character: Character) => {
-    setCharToDelete(character);
+  const handleDeleteConfirmation = (characterId: string) => {
+    setCharacterToDelete(characterId);
   };
 
-  const handleCloseModal = () => {
-    setCharToDelete(null);
-  };
-
-  const handleConfirmDelete = () => {
-    if (!charToDelete) return;
-    deleteCharacter(charToDelete.id);
+  const handleConfirmDelete = (character: Character) => {
+    deleteCharacter(character.id);
     onDelete();
-    setCharToDelete(null);
+    setCharacterToDelete(null);
     toast.success("Personagem excluído com sucesso");
   };
 
@@ -42,85 +39,62 @@ const CharacterTable: React.FC<CharacterTableProps> = ({
   }
 
   return (
-    <>
-      <div className="glass-panel p-0 overflow-hidden mb-8 ">
-        <div className="overflow-x-auto">
-          <table className="min-w-full table-auto">
-            <thead className="table-header">
-              <tr>
-                <th className="py-3 px-4 text-left">Nome</th>
-                <th className="py-3 px-4 text-center">Resets</th>
-                <th className="py-3 px-4 text-center">Soul</th>
-                <th className="py-3 px-4 text-center">MR</th>
-                <th className="py-3 px-4 text-center">Pontos de Evento</th>
-                <th className="py-3 px-4 text-center">PC Points</th>
-                <th className="py-3 px-4 text-center">Gold</th>
-                <th className="py-3 px-4 text-center">Data/Hora</th>
-                <th className="py-3 px-4 text-center">Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {characters.map((character) => (
-                <tr key={character.id} className="table-row">
-                  <td className="py-3 px-4 font-medium">{character.name}</td>
-                  <td className="py-3 px-4 text-center">{character.resets}</td>
-                  <td className="py-3 px-4 text-center">{character.soul}</td>
-                  <td className="py-3 px-4 text-center">{character.mr}</td>
-                  <td className="py-3 px-4 text-center">
-                    {character.eventPoints}
-                  </td>
-                  <td className="py-3 px-4 text-center">
-                    {character.pcPoints}
-                  </td>
-                  <td className="py-3 px-4 text-center">
-                    {character.gold.toLocaleString()}
-                  </td>
-                  <td className="py-3 px-4 text-center text-sm text-muted-foreground">
-                    {formatDate(character.timestamp)}
-                  </td>
-                  <td className="py-3 px-4 text-center">
+    <div className="glass-panel p-0 overflow-hidden mb-8 ">
+      <div className="overflow-x-auto">
+        <table className="min-w-full table-auto">
+          <thead className="table-header">
+            <tr>
+              <th className="py-3 px-4 text-left">Nome</th>
+              <th className="py-3 px-4 text-center">Resets</th>
+              <th className="py-3 px-4 text-center">Soul</th>
+              <th className="py-3 px-4 text-center">MR</th>
+              <th className="py-3 px-4 text-center">Pontos de Evento</th>
+              <th className="py-3 px-4 text-center">PC Points</th>
+              <th className="py-3 px-4 text-center">Gold</th>
+              <th className="py-3 px-4 text-center">Data/Hora</th>
+              <th className="py-3 px-4 text-center">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {characters.map((character) => (
+              <tr key={character.id} className="table-row">
+                <td className="py-3 px-4 font-medium">{character.name}</td>
+                <td className="py-3 px-4 text-center">{character.resets}</td>
+                <td className="py-3 px-4 text-center">{character.soul}</td>
+                <td className="py-3 px-4 text-center">{character.mr}</td>
+                <td className="py-3 px-4 text-center">
+                  {character.eventPoints}
+                </td>
+                <td className="py-3 px-4 text-center">{character.pcPoints}</td>
+                <td className="py-3 px-4 text-center">
+                  {character.gold.toLocaleString()}
+                </td>
+                <td className="py-3 px-4 text-center text-sm text-muted-foreground">
+                  {formatDate(character.timestamp)}
+                </td>
+                <td className="py-3 px-4 text-center">
+                  {characterToDelete === character.id ? (
                     <button
-                      onClick={() => handleOpenDeleteModal(character)}
+                      onClick={() => handleConfirmDelete(character)}
+                      className="secondary-button bg-red-800 text-white hover:bg-red-800"
+                    >
+                      Confirmar
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleDeleteConfirmation(character.id)}
                       className="secondary-button"
                     >
                       Excluir
                     </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-
-      {charToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
-          <div className="bg-white rounded-md p-6 w-[300px] shadow-lg">
-            <h2 className="text-lg font-medium mb-2 text-gray-800">
-              Confirmar Exclusão
-            </h2>
-            <p className="text-sm text-gray-700 mb-4">
-              Tem certeza que deseja excluir o personagem{" "}
-              <strong>{charToDelete.name}</strong>?
-            </p>
-            <div className="flex justify-end gap-2">
-              <button
-                onClick={handleCloseModal}
-                className="px-3 py-1 text-sm hover:bg-gray-200 rounded"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleConfirmDelete}
-                className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-500"
-              >
-                Confirmar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+    </div>
   );
 };
 
