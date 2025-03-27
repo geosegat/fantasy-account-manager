@@ -7,6 +7,7 @@ import {
 } from "../components/ui/tooltip";
 import { Loader2 } from "lucide-react";
 import { AppIcons } from "./ui/appicons";
+import { useNavigate } from "react-router-dom";
 
 interface HeaderProps {
   onImportSuccess?: () => void;
@@ -15,7 +16,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ onImportSuccess }) => {
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
+  const navigate = useNavigate();
   const handleImportClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
@@ -49,7 +50,10 @@ const Header: React.FC<HeaderProps> = ({ onImportSuccess }) => {
   return (
     <header className="w-full glass-panel p-6 mb-8 flex flex-col sm:flex-row justify-between items-center gap-4 ">
       <div className="text-center sm:text-left">
-        <h1 className="text-3xl sm:text-4xl font-medieval text-white">
+        <h1
+          className="text-3xl sm:text-4xl font-medieval text-white cursor-pointer "
+          onClick={() => navigate("/")}
+        >
           <span className="text-mu-gold">MU</span>
           <span className="tracking-wide"> Gerenciador de Contas</span>
         </h1>
