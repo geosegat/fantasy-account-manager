@@ -2,8 +2,7 @@
 
 MU Manager é uma aplicação web para gerenciar personagens do jogo MU Online, focada no acompanhamento de estatísticas de farm. Desenvolvido para jogadores que desejam monitorar seu progresso de forma organizada e acessível.
 
-![Preview](https://mumanager.netlify.app/preview.jpg)  
-**Link de produção:** [https://mumanager.netlify.app/](https://mumanager.netlify.app/)
+**Você pode utilizar acessando:** [https://mumanager.netlify.app/](https://mumanager.netlify.app/)
 
 ## Funcionalidades Principais
 
