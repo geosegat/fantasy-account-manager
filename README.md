@@ -37,11 +37,11 @@ MU Manager é uma aplicação web para gerenciar personagens do jogo MU Online, 
 
 ## Prints das Telas
 
-## Dashboard
+# Dashboard
 
 ![Dashboard para cadastrar/editar e visualizar alguns dados](https://i.imgur.com/HzsJx9w.png)
 
-## Histórico
+# Histórico
 
 ![Tela de histórico com opções de filtrar a partir de qualquer dado](https://i.imgur.com/L7hK8tw.png)
 
