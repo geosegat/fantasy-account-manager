@@ -1,69 +1,50 @@
-# Welcome to your Lovable project
+# MU Manager
 
-## Project info
+MU Manager é uma aplicação web para gerenciar personagens do jogo MU Online, focada no acompanhamento de estatísticas de farm. Desenvolvido para jogadores que desejam monitorar seu progresso de forma organizada e acessível.
 
-**URL**: https://lovable.dev/projects/b8e27e45-cc6f-4b4c-9591-c2ff9e513203
+![Preview](https://mumanager.netlify.app/preview.jpg)  
+**Link de produção:** [https://mumanager.netlify.app/](https://mumanager.netlify.app/)
 
-## How can I edit this code?
+## Funcionalidades Principais
 
-There are several ways of editing your application.
+- **Cadastro de Personagens:** Armazene múltiplos personagens com:
+  - Nome
+  - Quantidade de Resets
+  - Soul (SS)
+  - Master Reset (MR)
+  - Pontos de Evento
+  - Pontos PC
+  - Gold
+- **Estatísticas Consolidadas:** Visualize dados individuais ou totais de todos personagens
+- **Histórico Completo:** Registro temporal de todas as alterações
+- **Personalização:**
+  - Tema escuro padrão
+  - 3 opções de fontes
+  - Design responsivo
+- **Gestão de Dados:**
+  - Exportação/importação em JSON
+  - Armazenamento local via LocalStorage
+  - Histórico reversível
 
-**Use Lovable**
+## Tecnologias Utilizadas
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/b8e27e45-cc6f-4b4c-9591-c2ff9e513203) and start prompting.
+- **Frontend:** Vite + TypeScript
+- **Estilização:** Tailwind CSS
+- **Ícones:** Lucide
+- **Persistência:** LocalStorage
 
-Changes made via Lovable will be committed automatically to this repo.
+## Instalação Local
 
-**Use your preferred IDE**
+```bash
+# Clonar repositório
+git clone [URL_DO_REPOSITORIO]
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+# Instalar dependências
+npm install
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Executar ambiente de desenvolvimento
 npm run dev
+
+# Build para produção
+npm run build
 ```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with .
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/b8e27e45-cc6f-4b4c-9591-c2ff9e513203) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
