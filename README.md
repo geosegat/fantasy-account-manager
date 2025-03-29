@@ -16,7 +16,9 @@ MU Manager é uma aplicação web para gerenciar personagens do jogo MU Online, 
   - Pontos PC
   - Gold
 - **Estatísticas Consolidadas:** Visualize dados individuais ou totais de todos personagens
-- **Histórico Completo:** Registro temporal de todas as alterações
+- **Histórico Completo:**
+  - Registro temporal de todas as alterações
+  - Opções para filtrar os dados, por nome, quantidade de resetes, data etc...
 - **Personalização:**
   - Tema escuro padrão
   - 3 opções de fontes
@@ -32,6 +34,12 @@ MU Manager é uma aplicação web para gerenciar personagens do jogo MU Online, 
 - **Estilização:** Tailwind CSS
 - **Ícones:** Lucide
 - **Persistência:** LocalStorage
+
+## Prints das Telas
+
+![Dashboard para cadastrar/editar e visualizar alguns dados](https://i.imgur.com/HzsJx9w.png)
+
+![Tela de histórico com opções de filtrar a partir de qualquer dado](https://i.imgur.com/L7hK8tw.png)
 
 ## Instalação Local
 
