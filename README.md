@@ -48,7 +48,7 @@ MU Manager é uma aplicação web para gerenciar personagens do jogo MU Online, 
 
 ```bash
 # Clonar repositório
-git clone [https://github.com/geosegat/fantasy-account-manager.git]
+git clone https://github.com/geosegat/fantasy-account-manager.git
 
 # Instalar dependências
 npm install
