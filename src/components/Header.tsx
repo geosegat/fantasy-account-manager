@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useRef, useState } from "react";
 import { exportCharacters, importCharacters } from "../utils/localStorage";
 import {
@@ -9,6 +10,8 @@ import { Loader2 } from "lucide-react";
 import { AppIcons } from "./ui/appicons";
 import { useNavigate } from "react-router-dom";
 import MessageModal from "../components/MessageModal";
+
+const MAX_FILE_SIZE = 6.5 * 1024 * 1024;
 
 interface HeaderProps {
   onImportSuccess?: () => void;
@@ -26,56 +29,48 @@ const Header: React.FC<HeaderProps> = ({ onImportSuccess }) => {
   const navigate = useNavigate();
 
   const handleImportClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
+    fileInputRef.current?.click();
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (file.size > MAX_FILE_SIZE) {
+      setModalTitle("Arquivo muito grande");
+      setModalMessage("O arquivo excede o tamanho máximo permitido de 6 MB.");
+      setModalVariant("error");
+      setShowModal(true);
+      return;
+    }
+
     setIsLoading(true);
+
     try {
-      const worker = new Worker(
-        new URL("../utils/worker.ts", import.meta.url),
-        { type: "module" }
-      );
-      worker.postMessage(file);
-      worker.onmessage = (event) => {
-        const { success, data, error } = event.data;
-        if (success) {
-          const totalRecords = Array.isArray(data) ? data.length : 0;
-          const frequencyMap: Record<string, number> = {};
-          if (Array.isArray(data)) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            data.forEach((item: any) => {
-              if (item && item.name) {
-                frequencyMap[item.name] = (frequencyMap[item.name] || 0) + 1;
-              }
-            });
+      const text = await file.text();
+      const jsonData = JSON.parse(text);
+
+      const totalRecords = Array.isArray(jsonData) ? jsonData.length : 0;
+      const frequencyMap: Record<string, number> = {};
+      if (Array.isArray(jsonData)) {
+        jsonData.forEach((item: any) => {
+          if (item && item.name) {
+            frequencyMap[item.name] = (frequencyMap[item.name] || 0) + 1;
           }
-          const uniqueCharacters = Object.keys(frequencyMap);
-          let summaryMessage = `Importado com sucesso!\nTotal de registros: ${totalRecords}\nTotal de personagens únicos: ${uniqueCharacters.length}\n\n`;
-          uniqueCharacters.forEach((name) => {
-            summaryMessage += `${name}: ${frequencyMap[name]} registros\n`;
-          });
-          // Realiza a importação dos dados
-          importCharacters(data);
-          onImportSuccess?.();
-          setModalTitle("Resumo da Importação");
-          setModalMessage(summaryMessage);
-          setModalVariant("success");
-        } else {
-          setModalTitle("Erro ao importar arquivo JSON");
-          setModalMessage(
-            "Ocorreu um erro durante a importação. Por favor, verifique o arquivo e tente novamente."
-          );
-          setModalVariant("error");
-        }
-        setShowModal(true);
-        setIsLoading(false);
-        worker.terminate();
-      };
+        });
+      }
+      const uniqueCharacters = Object.keys(frequencyMap);
+      let summaryMessage = `Importado com sucesso!\nTotal de registros: ${totalRecords}\nTotal de personagens únicos: ${uniqueCharacters.length}\n\n`;
+      uniqueCharacters.forEach((name) => {
+        summaryMessage += `${name}: ${frequencyMap[name]} registros\n`;
+      });
+
+      importCharacters(jsonData);
+      onImportSuccess?.();
+      setModalTitle("Resumo da Importação");
+      setModalMessage(summaryMessage);
+      setModalVariant("success");
+      setShowModal(true);
     } catch (err) {
       console.error(err);
       setModalTitle("Erro ao importar arquivo JSON");
@@ -84,8 +79,8 @@ const Header: React.FC<HeaderProps> = ({ onImportSuccess }) => {
       );
       setModalVariant("error");
       setShowModal(true);
-      setIsLoading(false);
     } finally {
+      setIsLoading(false);
       if (e.target) e.target.value = "";
     }
   };
