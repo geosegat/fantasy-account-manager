@@ -20,6 +20,10 @@ const LargeJSONImporter: React.FC = () => {
 
   const cancelImport = () => {
     if (workerRef.current) {
+      // Send abort command to worker
+      workerRef.current.postMessage({ command: 'abort' });
+      
+      // Also terminate for immediate effect
       workerRef.current.terminate();
       workerRef.current = null;
       setIsLoading(false);
@@ -79,7 +83,7 @@ const LargeJSONImporter: React.FC = () => {
           setIsLoading(false);
           setErrorMessage("A importação demorou muito tempo e foi cancelada. Tente um arquivo menor.");
         }
-      }, 120000); // 2 minutes timeout
+      }, 180000); // 3 minutes timeout
     } catch (err) {
       console.error("Erro ao iniciar worker:", err);
       setErrorMessage(`Erro ao processar arquivo: ${err instanceof Error ? err.message : String(err)}`);

@@ -1,4 +1,3 @@
-
 import React, { useRef, useState } from "react";
 import { exportCharacters, importCharacters } from "../utils/localStorage";
 import {
@@ -36,6 +35,7 @@ const Header: React.FC<HeaderProps> = ({ onImportSuccess }) => {
 
   const cancelImport = () => {
     if (workerRef.current) {
+      workerRef.current.postMessage({ command: 'abort' });
       workerRef.current.terminate();
       workerRef.current = null;
       setIsLoading(false);
@@ -54,7 +54,6 @@ const Header: React.FC<HeaderProps> = ({ onImportSuccess }) => {
     setImportProgress(0);
     
     try {
-      // Terminate existing worker if there is one
       if (workerRef.current) {
         workerRef.current.terminate();
       }
@@ -72,14 +71,12 @@ const Header: React.FC<HeaderProps> = ({ onImportSuccess }) => {
         if (type === "progress") {
           setImportProgress(progress);
         } else if (type === "warning") {
-          // Just show the warning without stopping the import
           console.warn(message);
         } else if (type === "complete") {
           if (success) {
             const totalRecords = Array.isArray(data) ? data.length : 0;
             const frequencyMap: Record<string, number> = {};
             if (Array.isArray(data)) {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               data.forEach((item: any) => {
                 if (item && item.name) {
                   frequencyMap[item.name] = (frequencyMap[item.name] || 0) + 1;
@@ -91,7 +88,6 @@ const Header: React.FC<HeaderProps> = ({ onImportSuccess }) => {
             uniqueCharacters.forEach((name) => {
               summaryMessage += `${name}: ${frequencyMap[name]} registros\n`;
             });
-            // Realiza a importação dos dados
             importCharacters(data);
             onImportSuccess?.();
             setModalTitle("Resumo da Importação");
@@ -106,12 +102,13 @@ const Header: React.FC<HeaderProps> = ({ onImportSuccess }) => {
           }
           setShowModal(true);
           setIsLoading(false);
-          workerRef.current.terminate();
-          workerRef.current = null;
+          if (workerRef.current) {
+            workerRef.current.terminate();
+            workerRef.current = null;
+          }
         }
       };
       
-      // Set a timeout to prevent infinite loading
       setTimeout(() => {
         if (isLoading && workerRef.current) {
           workerRef.current.terminate();
@@ -122,7 +119,7 @@ const Header: React.FC<HeaderProps> = ({ onImportSuccess }) => {
           setModalVariant("error");
           setShowModal(true);
         }
-      }, 180000); // 3 minutes timeout
+      }, 180000);
     } catch (err) {
       console.error(err);
       setModalTitle("Erro ao importar arquivo JSON");
