@@ -27,6 +27,11 @@ const FullHistory: React.FC = () => {
     sortField: "timestamp" as SortField,
     sortDirection: "desc" as SortDirection,
   });
+
+  // Estados para paginação
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
   const sortOptions: { value: SortField; label: string }[] = [
     { value: "timestamp", label: "Data" },
     { value: "name", label: "Nome" },
@@ -53,6 +58,7 @@ const FullHistory: React.FC = () => {
       ...prev,
       [name]: name === "minResets" ? Number(value) : value,
     }));
+    setCurrentPage(1);
   };
 
   const clearNameFilter = () => {
@@ -60,6 +66,7 @@ const FullHistory: React.FC = () => {
       ...prev,
       name: "",
     }));
+    setCurrentPage(1);
   };
 
   const toggleSortDirection = () => {
@@ -85,7 +92,17 @@ const FullHistory: React.FC = () => {
       sortDirection: filters.sortDirection,
     });
     setFilteredCharacters(results);
+    setCurrentPage(1);
   }, [characters, filters]);
+
+  // Lógica de paginação
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredCharacters.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+  const totalPages = Math.ceil(filteredCharacters.length / itemsPerPage);
 
   return (
     <div className="min-h-screen px-4 sm:px-6 lg:px-8 py-8 max-w-7xl mx-auto page-transition">
@@ -94,14 +111,12 @@ const FullHistory: React.FC = () => {
       <div className="flex items-center gap-4 mb-8">
         <button
           onClick={handleBackToHome}
-          className=" hover:text-foreground transition-colors text-mu-gold"
+          className="hover:text-foreground transition-colors text-mu-gold"
           title="Voltar para Home"
         >
           <AppIcons.ArrowLeft size={24} />
         </button>
-        <h1 className="text-3xl font-bold font-medieval ">
-          Histórico Completo
-        </h1>
+        <h1 className="text-3xl font-bold font-medieval">Histórico Completo</h1>
       </div>
 
       <Header onImportSuccess={handleRefresh} />
@@ -125,7 +140,7 @@ const FullHistory: React.FC = () => {
           {isFilterExpanded && (
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
               <div className="relative">
-                <div className="relative ">
+                <div className="relative">
                   <input
                     type="text"
                     name="name"
@@ -185,7 +200,7 @@ const FullHistory: React.FC = () => {
                   name="sortField"
                   value={filters.sortField}
                   onChange={handleFilterChange}
-                  className="input flex-grow "
+                  className="input flex-grow"
                 >
                   {sortOptions.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -213,10 +228,51 @@ const FullHistory: React.FC = () => {
           )}
         </div>
 
-        <CharacterTable
-          characters={filteredCharacters}
-          onDelete={handleRefresh}
-        />
+        {/* Controles de paginação posicionados em cima da tabela */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="secondary-button"
+            >
+              Anterior
+            </button>
+            <span>
+              Página {currentPage} de {totalPages || 1}
+            </span>
+            <button
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              disabled={currentPage === totalPages || totalPages === 0}
+              className="secondary-button"
+            >
+              Próximo
+            </button>
+          </div>
+          <div className="flex items-center gap-2">
+            <label htmlFor="itemsPerPage" className="mr-2">
+              Itens por página:
+            </label>
+            <select
+              id="itemsPerPage"
+              value={itemsPerPage}
+              onChange={(e) => {
+                setItemsPerPage(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+              className="input"
+            >
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+            </select>
+          </div>
+        </div>
+
+        <CharacterTable characters={currentItems} onDelete={handleRefresh} />
       </div>
 
       <footer className="mt-12 text-center text-muted-foreground text-sm">
