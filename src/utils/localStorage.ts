@@ -50,9 +50,10 @@ export function saveCharacter(char: Partial<Character>) {
   setCharacters(all);
 }
 
-export function deleteCharacter(id: string) {
-  const all = getCharacters().filter((c) => c.id !== id);
-  setCharacters(all);
+export function deleteCharacterHistory(characterName: string) {
+  const characters = getCharacters();
+  const updated = characters.filter((char) => char.name !== characterName);
+  setCharacters(updated);
 }
 
 export function exportCharacters() {

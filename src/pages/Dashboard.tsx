@@ -7,6 +7,7 @@ import Statistics from "../components/Statistics";
 import { getCharacters, Character } from "../utils/localStorage";
 import { getUniqueCharacters } from "../utils/characterUtils";
 import { Toaster } from "sonner";
+import ResetStatisticsCards from "@/components/ResetStatisticsCards";
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -53,6 +54,7 @@ const Dashboard: React.FC = () => {
         />
 
         <Statistics refreshKey={refreshKey} />
+        <ResetStatisticsCards refreshKey={refreshKey} />
       </div>
 
       <footer className="mt-12 text-center text-muted-foreground text-sm">
