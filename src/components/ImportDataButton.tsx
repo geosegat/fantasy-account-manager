@@ -15,7 +15,6 @@ const ImportDataButton: React.FC<ImportDataButtonProps> = ({ onImportSuccess }) 
   const [modalMessage, setModalMessage] = useState("");
   const [modalVariant, setModalVariant] = useState<"success" | "error">("success");
   const [showModal, setShowModal] = useState(false);
-  const [importProgress, setImportProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const workerRef = useRef<Worker | null>(null);
 
@@ -31,7 +30,6 @@ const ImportDataButton: React.FC<ImportDataButtonProps> = ({ onImportSuccess }) 
       workerRef.current.terminate();
       workerRef.current = null;
       setIsLoading(false);
-      setImportProgress(0);
       setModalTitle("Importação Cancelada");
       setModalMessage("A importação foi cancelada pelo usuário.");
       setModalVariant("error");
@@ -43,7 +41,6 @@ const ImportDataButton: React.FC<ImportDataButtonProps> = ({ onImportSuccess }) 
     const file = e.target.files?.[0];
     if (!file) return;
     setIsLoading(true);
-    setImportProgress(0);
     
     try {
       if (workerRef.current) {
@@ -58,12 +55,10 @@ const ImportDataButton: React.FC<ImportDataButtonProps> = ({ onImportSuccess }) 
       workerRef.current.postMessage(file);
       
       workerRef.current.onmessage = (event) => {
-        const { type, success, data, error, progress, message } = event.data;
+        const { type, success, data, error } = event.data;
         
-        if (type === "progress") {
-          setImportProgress(progress);
-        } else if (type === "warning") {
-          console.warn(message);
+        if (type === "warning") {
+          console.warn(event.data.message);
         } else if (type === "complete") {
           if (success) {
             const totalRecords = Array.isArray(data) ? data.length : 0;
@@ -137,7 +132,7 @@ const ImportDataButton: React.FC<ImportDataButtonProps> = ({ onImportSuccess }) 
           {isLoading ? (
             <>
               <Loader2 className="h-5 w-5 animate-spin" />
-              Importando {importProgress}%
+              Importando...
             </>
           ) : (
             <>
@@ -162,20 +157,6 @@ const ImportDataButton: React.FC<ImportDataButtonProps> = ({ onImportSuccess }) 
         className="hidden"
         onChange={handleFileChange}
       />
-      {isLoading && (
-        <div className="fixed bottom-4 right-4 z-50 bg-black bg-opacity-75 p-4 rounded-lg max-w-xs">
-          <div className="flex items-center gap-2 text-white mb-2">
-            <Loader2 className="h-5 w-5 animate-spin text-mu-gold" />
-            <span>Processando arquivo ({importProgress}%)...</span>
-          </div>
-          <div className="w-full bg-gray-700 rounded-full h-2.5">
-            <div 
-              className="bg-mu-gold h-2.5 rounded-full" 
-              style={{ width: `${importProgress}%` }}
-            ></div>
-          </div>
-        </div>
-      )}
       {showModal && (
         <MessageModal
           title={modalTitle}

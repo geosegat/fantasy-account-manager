@@ -44,16 +44,9 @@ const processLargeJSON = async (file: File): Promise<any> => {
         result += chunk;
         
         processedBytes += (end - position);
-        // Report progress
-        if (processedBytes % (CHUNK_SIZE * 2) === 0 || processedBytes === file.size) {
-          self.postMessage({ 
-            type: 'progress', 
-            progress: Math.round((processedBytes / totalSize) * 100) 
-          });
-          
-          // Give the main thread some time to breathe
-          await new Promise(resolve => setTimeout(resolve, 0));
-        }
+        
+        // Give the main thread some time to breathe
+        await new Promise(resolve => setTimeout(resolve, 0));
       }
       
       try {
@@ -117,9 +110,6 @@ self.onmessage = async (e: MessageEvent<File>) => {
         message: 'O arquivo é muito grande (>100MB). Isso pode causar problemas de desempenho.'
       });
     }
-    
-    // Start processing with initial progress message
-    self.postMessage({ type: 'progress', progress: 0 });
     
     // Process in smaller portions to keep the UI responsive
     const jsonData = await processLargeJSON(file);
