@@ -18,7 +18,9 @@ const MessageModal: React.FC<MessageModalProps> = ({
       <div
         className={` bg-mu-bgGray rounded-lg p-6 max-w-md w-full shadow-lg border `}
       >
-        <h2 className="text-2xl font-bold mb-4">{title}</h2>
+        <h2 className="text-2xl font-bold mb-4 text-mu-gold font-medieval">
+          {title}
+        </h2>
         <pre className="whitespace-pre-wrap mb-6">{message}</pre>
         <button onClick={onClose} className="secondary-button w-full">
           Fechar
