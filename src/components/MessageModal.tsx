@@ -1,4 +1,3 @@
-
 import React from "react";
 
 interface MessageModalProps {
@@ -18,7 +17,7 @@ const MessageModal: React.FC<MessageModalProps> = ({
   const titleClass = variant === "error" ? "text-red-600" : "text-mu-gold";
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-start justify-center bg-black bg-opacity-50 pt-12">
+    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black bg-opacity-50 pt-12">
       <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-lg">
         <h2 className={`text-2xl font-bold mb-4 ${titleClass}`}>{title}</h2>
         <pre className="whitespace-pre-wrap text-gray-700 mb-6">{message}</pre>
