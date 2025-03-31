@@ -67,7 +67,6 @@ const ResetStatisticsCards: React.FC<ResetStatisticsCardsProps> = ({
     Object.keys(groups).forEach((name) => {
       const records = groups[name].sort((a, b) => a.timestamp - b.timestamp);
       if (records.length >= 2) {
-        // Usa os dois últimos registros
         const previous = records[records.length - 2];
         const last = records[records.length - 1];
         totalResetDiff += last.resets - previous.resets;
@@ -80,13 +79,11 @@ const ResetStatisticsCards: React.FC<ResetStatisticsCardsProps> = ({
       return;
     }
 
-    // Determina o fator efetivo de conversão
     const effectiveFactor =
       selectedInterval !== "custom"
         ? conversionFactors[selectedInterval as PresetUnit]
         : customValue * conversionFactors[customUnit];
 
-    // Calcula a média: (diferença de resets × fator) / diferença de tempo, arredondado
     const computedRate = Math.round(
       (totalResetDiff * effectiveFactor) / totalTimeDiff
     );

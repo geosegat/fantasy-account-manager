@@ -28,7 +28,6 @@ const FullHistory: React.FC = () => {
     sortDirection: "desc" as SortDirection,
   });
 
-  // Estados para paginação
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
@@ -40,6 +39,7 @@ const FullHistory: React.FC = () => {
     { value: "eventPoints", label: "Pontos de Evento" },
     { value: "pcPoints", label: "PC Points" },
     { value: "gold", label: "Gold" },
+    { value: "pontosMR", label: "Pontos MR" },
   ];
 
   const handleRefresh = () => {
@@ -76,6 +76,14 @@ const FullHistory: React.FC = () => {
     }));
   };
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredCharacters.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+  const totalPages = Math.ceil(filteredCharacters.length / itemsPerPage);
+
   useEffect(() => {
     const allCharacters = getCharacters();
     setCharacters(allCharacters);
@@ -94,15 +102,6 @@ const FullHistory: React.FC = () => {
     setFilteredCharacters(results);
     setCurrentPage(1);
   }, [characters, filters]);
-
-  // Lógica de paginação
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredCharacters.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
-  const totalPages = Math.ceil(filteredCharacters.length / itemsPerPage);
 
   return (
     <div className="min-h-screen px-4 sm:px-6 lg:px-8 py-8 max-w-7xl mx-auto page-transition">

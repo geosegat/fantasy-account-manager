@@ -20,6 +20,7 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ onSave }) => {
   const [eventPoints, setEventPoints] = useState("");
   const [pcPoints, setPcPoints] = useState("");
   const [gold, setGold] = useState("");
+  const [mrPoints, setMrPoints] = useState("");
   const [existingNames, setExistingNames] = useState<string[]>([]);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -38,6 +39,7 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ onSave }) => {
       eventPoints: parseInt(eventPoints) || 0,
       pcPoints: parseInt(pcPoints) || 0,
       gold: parseInt(gold) || 0,
+      pontosMR: parseInt(mrPoints) || 0,
     });
 
     setName("");
@@ -47,6 +49,7 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ onSave }) => {
     setEventPoints("");
     setPcPoints("");
     setGold("");
+    setMrPoints("");
 
     setExistingNames(getCharacterNames());
 
@@ -80,12 +83,13 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ onSave }) => {
       )[0];
 
       if (mostRecent) {
-        setResets(mostRecent.resets.toString());
-        setSoul(mostRecent.soul.toString());
-        setMr(mostRecent.mr.toString());
-        setEventPoints(mostRecent.eventPoints.toString());
-        setPcPoints(mostRecent.pcPoints.toString());
-        setGold(mostRecent.gold.toString());
+        setResets(mostRecent.resets?.toString() || "");
+        setSoul(mostRecent.soul?.toString() || "");
+        setMr(mostRecent.mr?.toString() || "");
+        setEventPoints(mostRecent.eventPoints?.toString() || "");
+        setPcPoints(mostRecent.pcPoints?.toString() || "");
+        setGold(mostRecent.gold?.toString() || "");
+        setMrPoints(mostRecent.pontosMR?.toString() || "");
       }
     } else {
       setResets("");
@@ -94,6 +98,7 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ onSave }) => {
       setEventPoints("");
       setPcPoints("");
       setGold("");
+      setMrPoints("");
     }
   }, [name, existingNames]);
 
@@ -214,6 +219,20 @@ const CharacterForm: React.FC<CharacterFormProps> = ({ onSave }) => {
               inputMode="numeric"
               value={gold}
               onChange={(e) => handleNumberChange(setGold, e.target.value)}
+              className="input-field"
+              placeholder="0"
+            />
+          </div>
+          <div>
+            <label htmlFor="mrPoints" className="input-label">
+              Pontos MR
+            </label>
+            <Input
+              id="mrPoints"
+              type="text"
+              inputMode="numeric"
+              value={mrPoints}
+              onChange={(e) => handleNumberChange(setMrPoints, e.target.value)}
               className="input-field"
               placeholder="0"
             />

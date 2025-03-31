@@ -7,13 +7,12 @@ export function sumCharacters(characters: Character[]): {
   eventPoints: number;
   pcPoints: number;
   gold: number;
+  pontosMr: number;
 } {
-  // Cria um objeto para armazenar apenas um registro por nome (em lowercase)
   const uniqueCharacters: { [key: string]: Character } = {};
 
   characters.forEach((ch) => {
     const nameKey = ch.name.toLowerCase();
-    // Se não existir ou se o timestamp do personagem atual for mais recente, substitua
     if (
       !uniqueCharacters[nameKey] ||
       ch.timestamp > uniqueCharacters[nameKey].timestamp
@@ -22,13 +21,13 @@ export function sumCharacters(characters: Character[]): {
     }
   });
 
-  // Soma os valores apenas dos registros únicos
   let resets = 0;
   let soul = 0;
   let mr = 0;
   let eventPoints = 0;
   let pcPoints = 0;
   let gold = 0;
+  let pontosMr = 0;
 
   Object.values(uniqueCharacters).forEach((ch) => {
     resets += ch.resets;
@@ -37,9 +36,10 @@ export function sumCharacters(characters: Character[]): {
     eventPoints += ch.eventPoints;
     pcPoints += ch.pcPoints;
     gold += ch.gold;
+    pontosMr += ch.pontosMR;
   });
 
-  return { resets, soul, mr, eventPoints, pcPoints, gold };
+  return { resets, soul, mr, eventPoints, pcPoints, gold, pontosMr };
 }
 
 export function formatNumber(value: number): string {

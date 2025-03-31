@@ -135,6 +135,13 @@ const CharacterTable: React.FC<CharacterTableProps> = ({
               </th>
               <th
                 className="py-3 px-4 text-center cursor-pointer"
+                onClick={() => requestSort("pontosMR")}
+              >
+                Pontos Mr{renderSortIndicator("pontosMR")}
+              </th>
+
+              <th
+                className="py-3 px-4 text-center cursor-pointer"
                 onClick={() => requestSort("timestamp")}
               >
                 Data/Hora{renderSortIndicator("timestamp")}
@@ -156,6 +163,7 @@ const CharacterTable: React.FC<CharacterTableProps> = ({
                 <td className="py-3 px-4 text-center">
                   {character.gold.toLocaleString()}
                 </td>
+                <td className="py-3 px-4 text-center">{character.pontosMR}</td>
                 <td className="py-3 px-4 text-center text-sm text-muted-foreground">
                   {formatDate(character.timestamp)}
                 </td>

@@ -34,9 +34,8 @@ const sorters: Record<SortField, (a: Character, b: Character) => number> = {
   pcPoints: (a, b) => a.pcPoints - b.pcPoints,
   gold: (a, b) => a.gold - b.gold,
   timestamp: (a, b) => a.timestamp - b.timestamp,
-  soul: function (a: Character, b: Character): number {
-    throw new Error("Function not implemented.");
-  },
+  soul: (a, b) => a.soul - b.soul,
+  pontosMR: (a, b) => a.pontosMR - b.pontosMR,
 };
 
 export const filterAndSortCharacters = (

@@ -8,6 +8,7 @@ export interface Character {
   eventPoints: number;
   pcPoints: number;
   gold: number;
+  pontosMR: number;
   timestamp: number;
 }
 

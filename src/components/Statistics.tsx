@@ -17,6 +17,7 @@ const Statistics: React.FC<StatisticsProps> = ({ refreshKey = 0 }) => {
     eventPoints: 0,
     pcPoints: 0,
     gold: 0,
+    pontosMr: 0,
   }));
   const [totalResets, setTotalResets] = useState<number | null>(null);
 
@@ -134,6 +135,12 @@ const Statistics: React.FC<StatisticsProps> = ({ refreshKey = 0 }) => {
             <h3 className="text-mu-gold/90 font-medieval">Gold</h3>
           </div>
           <p className="text-xl font-bold">{formatNumber(total.gold)}</p>
+        </div>
+        <div className="stat-card">
+          <div className="border-b border-mu-border pb-2 mb-2">
+            <h3 className="text-mu-gold/90 font-medieval">Pontos MR</h3>
+          </div>
+          <p className="text-xl font-bold">{formatNumber(total.pontosMr)}</p>
         </div>
 
         {totalResets !== null && (
